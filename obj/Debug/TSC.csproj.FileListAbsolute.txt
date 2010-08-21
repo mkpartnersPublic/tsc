@@ -1,0 +1,7 @@
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\ResolveAssemblyReference.cache
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\bin\TSC.dll
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\bin\TSC.pdb
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\TSC.dll
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\TSC.pdb
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\WebServiceTutorial.Inventory.resources
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\TSC.csproj.GenerateResource.Cache

@@ -1,0 +1,5 @@
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\bin\WebServiceTutorial.dll
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\bin\WebServiceTutorial.pdb
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\ResolveAssemblyReference.cache
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\WebServiceTutorial.dll
+C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Debug\WebServiceTutorial.pdb
