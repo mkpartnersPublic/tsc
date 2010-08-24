@@ -1,7 +1,0 @@
-C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\bin\TSC.dll
-C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\bin\TSC.pdb
-C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Release\ResolveAssemblyReference.cache
-C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Release\TSC.csproj.GenerateResource.Cache
-C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Release\TSC.dll
-C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Release\TSC.pdb
-C:\Edwin\MyProjects\WebServiceTutorial\WebServiceTutorial\obj\Release\WebServiceTutorial.Service1.resources

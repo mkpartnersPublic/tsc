@@ -1,1 +1,0 @@
-﻿<%@ WebService Language="C#" CodeBehind="Inventory.asmx.cs" Class="WebServiceTutorial.Service1" %>
