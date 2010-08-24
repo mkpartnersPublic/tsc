@@ -1,0 +1,5 @@
+C:\Edwin\MyProjects\TSC\TSC\Inventory\bin\Inventory.dll
+C:\Edwin\MyProjects\TSC\TSC\Inventory\bin\Inventory.pdb
+C:\Edwin\MyProjects\TSC\TSC\Inventory\obj\Release\ResolveAssemblyReference.cache
+C:\Edwin\MyProjects\TSC\TSC\Inventory\obj\Release\Inventory.dll
+C:\Edwin\MyProjects\TSC\TSC\Inventory\obj\Release\Inventory.pdb
