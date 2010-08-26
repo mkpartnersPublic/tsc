@@ -11,7 +11,9 @@ namespace Inventory
         public static string RetrieveConnectionString()
         {
             System.Configuration.Configuration rootWebConfig =
-                System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("/MyWebSiteRoot");
+            System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(HttpContext.Current.Request.ApplicationPath);
+            
+            //System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration(System.Web.HttpContext.Current.Server.MapPath("Web.config"));
             System.Configuration.ConnectionStringSettings connString;
             if (rootWebConfig.ConnectionStrings.ConnectionStrings.Count > 0)
             {
