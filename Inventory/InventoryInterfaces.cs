@@ -119,10 +119,10 @@ namespace Inventory
 
 
 
-        private List<VersePrice> m_VersePrice;
+        private VersePrice m_VersePrice;
 
 
-        public List<VersePrice> VersePrice
+        public VersePrice VersePrice
         {
             get
             {
@@ -135,31 +135,31 @@ namespace Inventory
             }
         }
 
-        public string addVersePrice(VersePrice myVersePrice)
-        {
-            try
-            {
-                m_VersePrice.Add(myVersePrice);
-                return "True";
-            }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
+        //public string addVersePrice(VersePrice myVersePrice)
+        //{
+        //    try
+        //    {
+        //        m_VersePrice.Add(myVersePrice);
+        //        return "True";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ex.Message;
+        //    }
 
-        }
+        //}
 
 
-        private List<Verses> m_verse;
+        private List<Verse> m_verse;
 
         public Boolean initialize()
         {
-            m_verse = new List<Verses>();
-            m_VersePrice = new List<VersePrice>();
+            m_verse = new List<Verse>();
+            //m_VersePrice = new List<VersePrice>();
             return true;
         }
 
-        public List<Verses> verse
+        public List<Verse> verses
         {
             get
             {
@@ -172,7 +172,7 @@ namespace Inventory
             }
         }
 
-        public string addVerse(Verses myVerse)
+        public string addVerse(Verse myVerse)
         {
             try
             {
@@ -189,7 +189,7 @@ namespace Inventory
 
 
     }
-    public struct Verses
+    public struct Verse
     {
         /// <summary>
         /// Backing Store for error

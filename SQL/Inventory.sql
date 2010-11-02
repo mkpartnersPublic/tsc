@@ -1,3 +1,23 @@
+CREATE FUNCTION dbo.DTtoUnixTS 
+( 
+    @dt DATETIME 
+) 
+RETURNS BIGINT 
+AS 
+BEGIN 
+    DECLARE @diff BIGINT 
+    IF @dt >= '20380119' 
+    BEGIN 
+        SET @diff = CONVERT(BIGINT, DATEDIFF(S, '19700101', '20380119')) 
+            + CONVERT(BIGINT, DATEDIFF(S, '20380119', @dt)) 
+    END 
+    ELSE 
+        SET @diff = DATEDIFF(S, '19700101', @dt) 
+    RETURN @diff 
+END
+
+GO
+
 
 
 --sp_help verses
@@ -49,15 +69,18 @@ CREATE PROC getVersesAssignedByDonationId
 --1. Webmethod to return verses assigned for a give sfdcDonationId.
 --2. Return all records where verses_2_projects.sfdc_donation_id = sfdcDonationId
 --3. Response should include the actual verses from the verses table.
--- EXEC getVersesAssignedByDonationId '1V71600ABS'
+-- EXEC getVersesAssignedByDonationId 'D-9090'
 AS
 BEGIN
-SELECT * FROM VERSES WHERE ID IN( 
+DECLARE @GROUIPID INT
+SELECT TOP 1 @GROUIPID=VERSE_GROUP_ID FROM VERSES_2_PROJECTS WHERE sfdc_Donation_Id=@sfdcDonationId
+SELECT *,@GROUIPID AS GROUIPID FROM VERSES WHERE ID IN( 
 SELECT VERSE_ID FROM VERSES_2_PROJECTS WHERE sfdc_Donation_Id=@sfdcDonationId 
 )
 END
 GO
 
+--SELECT * FROM VERSES_2_PROJECTS
 
 DROP PROC getVersesAssignedByAuthId
 GO
@@ -66,10 +89,13 @@ CREATE PROC getVersesAssignedByAuthId
 --1. Webmethod to return verses assigned for a give authId.
 --2. Return all records where verses_2_projects.auth_id = authId
 --3. Response should include the actual verses from the verses table.
--- EXEC getVersesAssignedByAuthId 2228891830
+-- EXEC getVersesAssignedByAuthId 7777777
+--EXEC getVersesAssignedByAuthId 2228891830
 AS
 BEGIN
-SELECT * FROM VERSES WHERE ID IN( 
+DECLARE @GROUIPID INT
+SELECT TOP 1 @GROUIPID=VERSE_GROUP_ID FROM VERSES_2_PROJECTS WHERE AUTH_ID=@authId
+SELECT *,@GROUIPID AS GROUIPID FROM VERSES WHERE ID IN( 
 SELECT VERSE_ID FROM VERSES_2_PROJECTS WHERE AUTH_ID=@authId 
 )
 END
@@ -135,7 +161,7 @@ CREATE PROC AssignVerses
 @sfdcContactId varchar(50),
 @fundId varchar(50),
 @paymentDate datetime,
-@authId int,
+@authId bigint,
 @numberOfVerses int
 
 --1. Webmethod to assign the required numbers of verses to a donation
@@ -145,9 +171,13 @@ CREATE PROC AssignVerses
 --N is equal to numberOfVerses.
 --3. Update the records set auth_id = authId, sfdc_opportunity_id = sfdcDonationId, sfdc_contact_id = sfdcContactId, fund_id = fundId, sponsored_time = paymentDate.
 --4. Response should include the verses assigned.
-
+--exec AssignVerses 71600,4356,'aaabbbccc','12123',122,'12/10/2010',-1,3
+--project_id	language_id
+--71600	4356
 AS
 BEGIN
+
+	--SELECT *,@GROUIPID AS GROUIPID FROM VERSES	
 	
 	
 	/* Create a temporary table with all the verseid that needs to be assigned*/
@@ -157,116 +187,109 @@ BEGIN
 	--set @count = 3 
 	IF OBJECT_ID(N'tempdb..#verseid', N'U') IS NOT NULL 
 		DROP TABLE #verseid;
+	DECLARE @GROUIPID INT
+	SET @GROUIPID = (SELECT ID FROM VERSE_GROUPS WHERE PROJECT_ID=@projectId AND LANGUAGE_ID=@languageId)
 	
-	SET ROWCOUNT @numberOfVerses
-	SELECT VERSE_ID INTO #verseid
-	FROM VERSES_2_PROJECTS 
-	WHERE AUTH_ID is null AND FUND_ID is null 
-	order by VERSE_ID desc
-	SET ROWCOUNT 0
-	/* Create a temporary table with all the verseid that needs to be assigned*/
-
-	UPDATE VERSES_2_PROJECTS
-	SET auth_id = @authId, 
-	sfdc_opportunity_id = @sfdcDonationId, 
-	sfdc_Donation_Id = @sfdcContactId, 
-	fund_id = @fundId, 
-	sponsored_time =CONVERT( BIGINT,@paymentDate)
-	WHERE
-	VERSE_ID IN (
-			SELECT VERSE_ID FROM #verseid
-			) 
-			
-	SELECT * FROM VERSES_2_PROJECTS	
-	WHERE VERSE_ID IN (SELECT VERSE_ID FROM #verseid) 
+	/* Changes made to avoid concurrent user update*/
+	BEGIN TRAN
 	
+		SET ROWCOUNT @numberOfVerses
+		SELECT VERSE_ID INTO #verseid
+		FROM VERSES_2_PROJECTS 
+		WHERE AUTH_ID IS NULL
+		AND FUND_ID IS NULL
+		AND VERSE_GROUP_ID=@GROUIPID
+		ORDER BY VERSE_ID ASC
+		SET ROWCOUNT 0
+		
+		--select * from #verseid
+		
+		/* Create a temporary table with all the verseid that needs to be assigned*/
+		/*if @authId=-1
+			set @authId=NULL		*/
+		UPDATE VERSES_2_PROJECTS
+		SET auth_id = @authId, 
+		sfdc_Donation_Id = @sfdcDonationId, 
+		sfdc_contact_id = @sfdcContactId, 
+		fund_id = @fundId, 
+		sponsored_time =dbo.DTtoUnixTS(@paymentDate) 
+		--CONVERT( BIGINT,DATEDIFF(day, '1970-01-01 00:00:00.000', @paymentDate))
+		--CONVERT( BIGINT,@paymentDate)
+		WHERE
+		VERSE_GROUP_ID=@GROUIPID
+		AND
+		VERSE_ID IN (
+				SELECT VERSE_ID FROM #verseid
+				) 
+				
+		--SELECT * FROM VERSES_2_PROJECTS	
+		SELECT *,@GROUIPID AS GROUPID FROM VERSES
+		WHERE ID IN (SELECT VERSE_ID FROM #verseid) 
+	
+	IF @@error <> 0
+		ROLLBACK TRAN
+	ELSE
+		COMMIT TRAN	
+	--SELECT ID FROM VERSE_GROUPS WHERE PROJECT_ID=@projectId AND LANGUAGE_ID=@languageId
 	IF OBJECT_ID(N'tempdb..#verseid', N'U') IS NOT NULL 
 		DROP TABLE #verseid;
 END
 GO
 
+--sp_help VERSES_2_PROJECTS
+
+DROP PROC updateVersesAssignedByAuthId
+GO
+CREATE PROC updateVersesAssignedByAuthId
+@authId bigint,
+@sfdcDonationId varchar(50),
+@sfdcContactId varchar(50),
+@fundId varchar(50),
+@paymentDate datetime
+--1. Webmethod to updated already assigned verses based on the Auth Id.
+--2. For all records where verses_2_projects.auth_id = authId, set sfdc_donation_id = sfdcDonationId, sfdc_contact_id = sfdcContactId, fund_id = fundId and sponsored_time = paymentDate.
+--3. Include status and error in the response. No need to return anything else.
+AS
+BEGIN
+
+	UPDATE VERSES_2_PROJECTS
+	SET 
+	sfdc_Donation_Id = @sfdcDonationId, 
+	sfdc_contact_id = @sfdcContactId, 
+	fund_id = @fundId, 
+	sponsored_time =dbo.DTtoUnixTS(@paymentDate) 
+	WHERE
+	auth_id = @authId
+END
+GO
 
 
-----DECLARE @count int 
-----SET @count = 20 
- 
-----SELECT TOP @count * FROM verses
-sp_help VERSES_2_PROJECTS	
+DROP PROC updateVersesAssignedByDonationId
+GO
+CREATE PROC updateVersesAssignedByDonationId
+@authId bigint,
+@sfdcDonationId varchar(50),
+@sfdcContactId varchar(50),
+@fundId varchar(50),
+@paymentDate datetime
+--1. Webmethod to updated already assigned verses based on the Donation Id.
+--2. For all records where verses_2_projects.sfdc_donation_id = sfdcDonationId, set auth_id = authId,  sfdc_contact_id = sfdcContactId, fund_id = fundId, sponsored_time = paymentDate.
+--3. Include status and error in the response. No need to return anything else.
+AS
+BEGIN
 
+	UPDATE VERSES_2_PROJECTS
+	SET 
+	auth_id = @authId, 
+	sfdc_contact_id = @sfdcContactId, 
+	fund_id = @fundId, 
+	sponsored_time =dbo.DTtoUnixTS(@paymentDate)
+	--CONVERT( BIGINT,@paymentDate)
+	WHERE
+	sfdc_Donation_Id = @sfdcDonationId
+END
+GO
 
---declare @sql  nvarchar(200), @count int 
---set @count = 15 
---set @sql = N'select top ' + cast(@count as nvarchar(4)) + ' verse_id INTO #verseid from verses_2_projects' 
---exec (@sql) 
---GO
-
---DROP TABLE #verseid
---declare @count int 
---set @count = 3 
---SET ROWCOUNT @count
---select VERSE_ID INTO #verseid
---FROM VERSES_2_PROJECTS 
---WHERE AUTH_ID is null AND fund_id is null 
---order by verse_id desc
-
-
---select * from #verseid
---SET ROWCOUNT 0
-
-
---select * 
---FROM VERSES_2_PROJECTS 
---WHERE AUTH_ID is null AND fund_id is null 
-
-
---SELECT VERSE_PRICE FROM GROUP_PROJECT_PRICE 
---WHERE PROJECT_ID=@ProjectId
---AND LANGUAGE_ID=@LanguageId
-
---update VERSES_2_PROJECTS set AUTH_ID = null , fund_id = null where verse_id in (
---23417,
---23418,
---23419,
---23420,
---23421)
-
---SELECT * FROM verses_2_projects
---SELECT * FROM verses
---sp_help verses_2_projects
-----select top 10 * from verses
---SELECT * FROM VERSE_GROUPS
---SELECT * FROM GROUP_PROJECT_PRICE
-----select COUNT(*) from verses
-------31087
-
-----alter PROC ReturnTop10Versus
-----AS
-----SELECT TOP 10 * FROM VERSES FOR XML
-
-
-----CREATE PROC ReturnVerse
-----@id as int
-----AS
-----SELECT * FROM VERSES WHERE id=@id
-
-------ReturnVerse 2
-
---ALTER TABLE verses_2_projects
---ADD sfdc_Donation_Id BIGINT
-
---ALTER TABLE verses_2_projects
---ADD sfdc_contact_id BIGINT
-
---ALTER TABLE verses_2_projects
---ADD sfdc_Donation_Id BIGINT
-
---ALTER TABLE verses_2_projects
---ADD sfdc_opportunity_id BIGINT
-
- 
- 
- 
--- select CONVERT( varchar(10), getdate(),101)
- 
---  select CONVERT( BIGINT,getdate())
---  select CONVERT( BIGINT,getdate()-1)
+--declare @paymentDate datetime
+--set @paymentDate=getdate()
+--select CONVERT( BIGINT,DATEDIFF(day, '1970-01-01 00:00:00.000', @paymentDate))

@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tsc.org/Inventory" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://tsc.org/Inventory" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tsc.org/Inventory">
+      <s:element name="returnConnString">
+        <s:complexType />
+      </s:element>
+      <s:element name="returnConnStringResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="returnConnStringResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVersePrice">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="projectId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="languageId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="isGroup" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVersePriceResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="getVersePriceResult" type="tns:InventoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="InventoryResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="error" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="sucess" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="VersePrice" type="tns:ArrayOfVersePrice" />
+          <s:element minOccurs="0" maxOccurs="1" name="verse" type="tns:ArrayOfVerses" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfVersePrice">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="VersePrice" type="tns:VersePrice" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="VersePrice">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="projectid" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="languageId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="versePrice" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="groupId" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="sucess" type="s:boolean" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfVerses">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Verses" type="tns:Verses" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Verses">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="error" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="returnValue" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="id" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="book" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="text" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="chapter" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="verse" type="s:int" />
+          <s:element minOccurs="1" maxOccurs="1" name="verseGroupId" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="getVersesAssignedByDonationId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sfdcDonationId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVersesAssignedByDonationIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="getVersesAssignedByDonationIdResult" type="tns:InventoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVersesAssignedByAuthId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="authId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVersesAssignedByAuthIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="getVersesAssignedByAuthIdResult" type="tns:InventoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVersesAssigned">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sfdcDonationId" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="authId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="getVersesAssignedResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="getVersesAssignedResult" type="tns:InventoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="releaseVersesAssignedByDonationId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="sfdcDonationId" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="releaseVersesAssignedByDonationIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="releaseVersesAssignedByDonationIdResult" type="tns:InventoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="releaseVersesAssignedByAuthId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="authId" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="releaseVersesAssignedByAuthIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="releaseVersesAssignedByAuthIdResult" type="tns:InventoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="assignVerses">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="projectId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="languageId" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="sfdcDonationId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="sfdcContactId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fundId" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="paymentDate" type="s:dateTime" />
+            <s:element minOccurs="1" maxOccurs="1" name="authId" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="numberOfVerses" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="assignVersesResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="assignVersesResult" type="tns:InventoryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="returnConnStringSoapIn">
+    <wsdl:part name="parameters" element="tns:returnConnString" />
+  </wsdl:message>
+  <wsdl:message name="returnConnStringSoapOut">
+    <wsdl:part name="parameters" element="tns:returnConnStringResponse" />
+  </wsdl:message>
+  <wsdl:message name="getVersePriceSoapIn">
+    <wsdl:part name="parameters" element="tns:getVersePrice" />
+  </wsdl:message>
+  <wsdl:message name="getVersePriceSoapOut">
+    <wsdl:part name="parameters" element="tns:getVersePriceResponse" />
+  </wsdl:message>
+  <wsdl:message name="getVersesAssignedByDonationIdSoapIn">
+    <wsdl:part name="parameters" element="tns:getVersesAssignedByDonationId" />
+  </wsdl:message>
+  <wsdl:message name="getVersesAssignedByDonationIdSoapOut">
+    <wsdl:part name="parameters" element="tns:getVersesAssignedByDonationIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="getVersesAssignedByAuthIdSoapIn">
+    <wsdl:part name="parameters" element="tns:getVersesAssignedByAuthId" />
+  </wsdl:message>
+  <wsdl:message name="getVersesAssignedByAuthIdSoapOut">
+    <wsdl:part name="parameters" element="tns:getVersesAssignedByAuthIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="getVersesAssignedSoapIn">
+    <wsdl:part name="parameters" element="tns:getVersesAssigned" />
+  </wsdl:message>
+  <wsdl:message name="getVersesAssignedSoapOut">
+    <wsdl:part name="parameters" element="tns:getVersesAssignedResponse" />
+  </wsdl:message>
+  <wsdl:message name="releaseVersesAssignedByDonationIdSoapIn">
+    <wsdl:part name="parameters" element="tns:releaseVersesAssignedByDonationId" />
+  </wsdl:message>
+  <wsdl:message name="releaseVersesAssignedByDonationIdSoapOut">
+    <wsdl:part name="parameters" element="tns:releaseVersesAssignedByDonationIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="releaseVersesAssignedByAuthIdSoapIn">
+    <wsdl:part name="parameters" element="tns:releaseVersesAssignedByAuthId" />
+  </wsdl:message>
+  <wsdl:message name="releaseVersesAssignedByAuthIdSoapOut">
+    <wsdl:part name="parameters" element="tns:releaseVersesAssignedByAuthIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="assignVersesSoapIn">
+    <wsdl:part name="parameters" element="tns:assignVerses" />
+  </wsdl:message>
+  <wsdl:message name="assignVersesSoapOut">
+    <wsdl:part name="parameters" element="tns:assignVersesResponse" />
+  </wsdl:message>
+  <wsdl:portType name="InventorySoap">
+    <wsdl:operation name="returnConnString">
+      <wsdl:input message="tns:returnConnStringSoapIn" />
+      <wsdl:output message="tns:returnConnStringSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getVersePrice">
+      <wsdl:input message="tns:getVersePriceSoapIn" />
+      <wsdl:output message="tns:getVersePriceSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssignedByDonationId">
+      <wsdl:input message="tns:getVersesAssignedByDonationIdSoapIn" />
+      <wsdl:output message="tns:getVersesAssignedByDonationIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssignedByAuthId">
+      <wsdl:input message="tns:getVersesAssignedByAuthIdSoapIn" />
+      <wsdl:output message="tns:getVersesAssignedByAuthIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssigned">
+      <wsdl:input message="tns:getVersesAssignedSoapIn" />
+      <wsdl:output message="tns:getVersesAssignedSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="releaseVersesAssignedByDonationId">
+      <wsdl:input message="tns:releaseVersesAssignedByDonationIdSoapIn" />
+      <wsdl:output message="tns:releaseVersesAssignedByDonationIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="releaseVersesAssignedByAuthId">
+      <wsdl:input message="tns:releaseVersesAssignedByAuthIdSoapIn" />
+      <wsdl:output message="tns:releaseVersesAssignedByAuthIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="assignVerses">
+      <wsdl:input message="tns:assignVersesSoapIn" />
+      <wsdl:output message="tns:assignVersesSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="InventorySoap" type="tns:InventorySoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="returnConnString">
+      <soap:operation soapAction="http://tsc.org/Inventory/returnConnString" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersePrice">
+      <soap:operation soapAction="http://tsc.org/Inventory/getVersePrice" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssignedByDonationId">
+      <soap:operation soapAction="http://tsc.org/Inventory/getVersesAssignedByDonationId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssignedByAuthId">
+      <soap:operation soapAction="http://tsc.org/Inventory/getVersesAssignedByAuthId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssigned">
+      <soap:operation soapAction="http://tsc.org/Inventory/getVersesAssigned" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="releaseVersesAssignedByDonationId">
+      <soap:operation soapAction="http://tsc.org/Inventory/releaseVersesAssignedByDonationId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="releaseVersesAssignedByAuthId">
+      <soap:operation soapAction="http://tsc.org/Inventory/releaseVersesAssignedByAuthId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="assignVerses">
+      <soap:operation soapAction="http://tsc.org/Inventory/assignVerses" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="InventorySoap12" type="tns:InventorySoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="returnConnString">
+      <soap12:operation soapAction="http://tsc.org/Inventory/returnConnString" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersePrice">
+      <soap12:operation soapAction="http://tsc.org/Inventory/getVersePrice" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssignedByDonationId">
+      <soap12:operation soapAction="http://tsc.org/Inventory/getVersesAssignedByDonationId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssignedByAuthId">
+      <soap12:operation soapAction="http://tsc.org/Inventory/getVersesAssignedByAuthId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="getVersesAssigned">
+      <soap12:operation soapAction="http://tsc.org/Inventory/getVersesAssigned" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="releaseVersesAssignedByDonationId">
+      <soap12:operation soapAction="http://tsc.org/Inventory/releaseVersesAssignedByDonationId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="releaseVersesAssignedByAuthId">
+      <soap12:operation soapAction="http://tsc.org/Inventory/releaseVersesAssignedByAuthId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="assignVerses">
+      <soap12:operation soapAction="http://tsc.org/Inventory/assignVerses" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Inventory">
+    <wsdl:port name="InventorySoap" binding="tns:InventorySoap">
+      <soap:address location="http://sfdc.seedconnect.org/InventoryDev/Inventory.asmx" />
+    </wsdl:port>
+    <wsdl:port name="InventorySoap12" binding="tns:InventorySoap12">
+      <soap12:address location="http://sfdc.seedconnect.org/InventoryDev/Inventory.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

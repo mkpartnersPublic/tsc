@@ -91,7 +91,7 @@ namespace Inventory
         }
 
         [WebMethod]
-        public InventoryResponse getVersesAssignedByAuthId(int authId)
+        public InventoryResponse getVersesAssignedByAuthId(Int64 authId)
         {
             try
             {
@@ -115,7 +115,7 @@ namespace Inventory
         }
 
         [WebMethod]
-        public InventoryResponse getVersesAssigned(String sfdcDonationId, int authId)
+        public InventoryResponse getVersesAssigned(String sfdcDonationId, Int64 authId)
         {
             try
             {
@@ -173,7 +173,7 @@ namespace Inventory
         }
 
         [WebMethod]
-        public InventoryResponse releaseVersesAssignedByAuthId(int authId)
+        public InventoryResponse releaseVersesAssignedByAuthId(Int64 authId)
         {
             try
             {
@@ -197,7 +197,7 @@ namespace Inventory
         }
 
         [WebMethod]
-        public InventoryResponse assignVerses(int projectId, int languageId, String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate, int authId, int numberOfVerses)
+        public InventoryResponse assignVerses(int projectId, int languageId, String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate, Int64 authId, int numberOfVerses)
         {
             try
             {
@@ -219,6 +219,58 @@ namespace Inventory
                 return invErrResponce;
             }
         }
+
+
+        [WebMethod]
+        public InventoryResponse updateVersesAssignedByAuthId(Int64 authId,String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate )
+        {
+            try
+            {
+                InventoryResponse invResponse = new InventoryResponse();
+
+                invResponse.initialize();
+
+                BusinessRules bs = new BusinessRules();
+
+                invResponse = bs.updateVersesAssignedByAuthId(authId,sfdcDonationId, sfdcContactId, fundId, paymentDate );
+
+                return invResponse;
+
+            }
+            catch (Exception ex)
+            {
+                InventoryResponse invErrResponce = new InventoryResponse();
+                invErrResponce.error = ex.Message;
+                return invErrResponce;
+            }
+        }
+
+
+
+        [WebMethod]
+        public InventoryResponse updateVersesAssignedByDonationId(Int64 authId, String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate)
+        {
+            try
+            {
+                InventoryResponse invResponse = new InventoryResponse();
+
+                invResponse.initialize();
+
+                BusinessRules bs = new BusinessRules();
+
+                invResponse = bs.updateVersesAssignedByDonationId(authId, sfdcDonationId, sfdcContactId, fundId, paymentDate);
+
+                return invResponse;
+
+            }
+            catch (Exception ex)
+            {
+                InventoryResponse invErrResponce = new InventoryResponse();
+                invErrResponce.error = ex.Message;
+                return invErrResponce;
+            }
+        }
+
 
         private void InitializeComponent()
         {

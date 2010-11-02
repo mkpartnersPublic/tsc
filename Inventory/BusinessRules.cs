@@ -9,10 +9,10 @@ namespace Inventory
 {
     public class BusinessRules
     {
-        public Verses Retrieve(int id)
+        public Verse Retrieve(int id)
         {
             // create instance of Verseus struct with default constructor
-            Verses newVerses = new Verses();
+            Verse newVerses = new Verse();
             //string strConnection = HelperClass.RetrieveConnectionString();
             string connectionString;
             connectionString = "Server = .\\EDWIN; Database = Inventory; User ID = sa; Password = Edwin; Trusted_Connection = False";
@@ -149,7 +149,8 @@ namespace Inventory
                     VersePrice vp = new VersePrice();
                     vp.versePrice = Convert.ToDecimal(dataSet.Tables[0].Rows[0]["VERSE_PRICE"].ToString());
                     vp.sucess = true;
-                    newInventoryResponse.addVersePrice(vp);
+                    //newInventoryResponse.addVersePrice(vp);
+                    newInventoryResponse.VersePrice = vp;
                 }
                 else
                 {
@@ -217,14 +218,14 @@ namespace Inventory
                 {
                     foreach (DataRow dr in dataSet.Tables[0].Rows)
                     {
-                        Verses addNewVerse = new Verses();
+                        Verse addNewVerse = new Verse();
                         addNewVerse.book = dr["book"].ToString();
                         addNewVerse.chapter = Convert.ToInt16(dr["chapter"].ToString());
                         addNewVerse.id = Convert.ToInt16(dr["id"].ToString());
                         addNewVerse.verse = Convert.ToInt16(dr["verse"].ToString());
                         addNewVerse.returnValue = "True";
                         addNewVerse.text = dr["text"].ToString();
-                        //addNewVerse.verseGroupId = "";
+                        addNewVerse.verseGroupId = Convert.ToInt16(dr["GROUIPID"].ToString());
                         newInventoryResponse.addVerse(addNewVerse);
                     }
 
@@ -238,7 +239,7 @@ namespace Inventory
             }
         }
 
-        public InventoryResponse getVersesAssignedByAuthId(int authId)
+        public InventoryResponse getVersesAssignedByAuthId(Int64 authId)
         {
             // create instance of Verseus struct with default constructor
             InventoryResponse newInventoryResponse = new InventoryResponse();
@@ -294,14 +295,14 @@ namespace Inventory
                 {
                     foreach (DataRow dr in dataSet.Tables[0].Rows)
                     {
-                        Verses addNewVerse = new Verses();
+                        Verse addNewVerse = new Verse();
                         addNewVerse.book = dr["book"].ToString();
                         addNewVerse.chapter = Convert.ToInt16(dr["chapter"].ToString());
                         addNewVerse.id = Convert.ToInt16(dr["id"].ToString());
                         addNewVerse.verse = Convert.ToInt16(dr["verse"].ToString());
                         addNewVerse.returnValue = "True";
                         addNewVerse.text = dr["text"].ToString();
-                        //addNewVerse.verseGroupId = "";
+                        addNewVerse.verseGroupId = Convert.ToInt16(dr["GROUIPID"].ToString());
                         newInventoryResponse.addVerse(addNewVerse);
                     }
 
@@ -365,7 +366,7 @@ namespace Inventory
             }
         }
 
-        public InventoryResponse releaseVersesAssignedByAuthId(int authId)
+        public InventoryResponse releaseVersesAssignedByAuthId(Int64 authId)
         {
             // create instance of Verseus struct with default constructor
             InventoryResponse newInventoryResponse = new InventoryResponse();
@@ -408,14 +409,14 @@ namespace Inventory
                 }
                 else
                 {
-                    newInventoryResponse.error = "No verses released for this AuthId";
+                    newInventoryResponse.error = "No verses reassigned for this AuthId";
                 }
 
                 return newInventoryResponse;
             }
         }
 
-        public InventoryResponse assignVerses(int projectId, int languageId, String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate, int authId, int numberOfVerses)
+        public InventoryResponse assignVerses(int projectId, int languageId, String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate, Int64 authId, int numberOfVerses)
         {
             // create instance of Verseus struct with default constructor
             InventoryResponse newInventoryResponse = new InventoryResponse();
@@ -471,7 +472,7 @@ namespace Inventory
                 parameter7.SqlDbType = SqlDbType.BigInt;
                 parameter7.Direction = ParameterDirection.Input;
                 parameter7.Value = authId;
-
+                                
                 SqlParameter parameter8 = new SqlParameter();
                 parameter8.ParameterName = "@numberOfVerses";
                 parameter8.SqlDbType = SqlDbType.Int;
@@ -508,19 +509,20 @@ namespace Inventory
 
                 newInventoryResponse.sucess = true;
                 newInventoryResponse.error = "";
-
+                
                 if (dataSet.Tables[0].Rows.Count > 0)
                 {
                     foreach (DataRow dr in dataSet.Tables[0].Rows)
                     {
-                        Verses addNewVerse = new Verses();
+                        Verse addNewVerse = new Verse();
+                        
                         addNewVerse.book = dr["book"].ToString();
                         addNewVerse.chapter = Convert.ToInt16(dr["chapter"].ToString());
                         addNewVerse.id = Convert.ToInt16(dr["id"].ToString());
                         addNewVerse.verse = Convert.ToInt16(dr["verse"].ToString());
                         addNewVerse.returnValue = "True";
                         addNewVerse.text = dr["text"].ToString();
-                        //addNewVerse.verseGroupId = "";
+                        addNewVerse.verseGroupId = Convert.ToInt16(dr["GROUPID"].ToString());
                         newInventoryResponse.addVerse(addNewVerse);
                     }
 
@@ -528,10 +530,173 @@ namespace Inventory
                 else
                 {
                     newInventoryResponse.error = "No verses Assigned";
+                    newInventoryResponse.sucess = false;
                 }
 
                 return newInventoryResponse;
             }
         }
+
+
+        public InventoryResponse updateVersesAssignedByAuthId(Int64 authId, String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate)
+        {
+            // create instance of Verseus struct with default constructor
+            InventoryResponse newInventoryResponse = new InventoryResponse();
+            newInventoryResponse.initialize();
+            string connectionString = HelperClass.RetrieveConnectionString();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Create the command and set its properties.
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+                command.CommandText = "updateVersesAssignedByAuthId";
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Add the input parameters and set its properties.
+                SqlParameter parameter1 = new SqlParameter();
+                parameter1.ParameterName = "@authId";
+                parameter1.SqlDbType = SqlDbType.BigInt;
+                parameter1.Direction = ParameterDirection.Input;
+                parameter1.Value = authId;
+
+
+                SqlParameter parameter3 = new SqlParameter();
+                parameter3.ParameterName = "@sfdcContactId";
+                parameter3.SqlDbType = SqlDbType.VarChar;
+                parameter3.Direction = ParameterDirection.Input;
+                parameter3.Value = sfdcContactId;
+
+                SqlParameter parameter4 = new SqlParameter();
+                parameter4.ParameterName = "@sfdcDonationId";
+                parameter4.SqlDbType = SqlDbType.VarChar;
+                parameter4.Direction = ParameterDirection.Input;
+                parameter4.Value = sfdcDonationId;
+
+                SqlParameter parameter5 = new SqlParameter();
+                parameter5.ParameterName = "@fundId";
+                parameter5.SqlDbType = SqlDbType.VarChar;
+                parameter5.Direction = ParameterDirection.Input;
+                parameter5.Value = fundId;
+
+                SqlParameter parameter6 = new SqlParameter();
+                parameter6.ParameterName = "@paymentDate";
+                parameter6.SqlDbType = SqlDbType.DateTime;
+                parameter6.Direction = ParameterDirection.Input;
+                parameter6.Value = paymentDate;
+
+
+                // Add the parameter to the Parameters collection. 
+                command.Parameters.Add(parameter1);
+                command.Parameters.Add(parameter3);
+                command.Parameters.Add(parameter4);
+                command.Parameters.Add(parameter5);
+                command.Parameters.Add(parameter6);
+
+                // Open the connection.
+                connection.Open();
+
+                int rows = command.ExecuteNonQuery();
+
+                connection.Close();
+
+                newInventoryResponse.sucess = true;
+                newInventoryResponse.error = "";
+
+                if (rows > 0)
+                {
+
+                    newInventoryResponse.error = "";
+                }
+                else
+                {
+                    newInventoryResponse.error = "No verses released for this AuthId";
+                }
+
+
+                return newInventoryResponse;
+            }
+        }
+
+        public InventoryResponse updateVersesAssignedByDonationId(Int64 authId, String sfdcDonationId, String sfdcContactId, String fundId, DateTime paymentDate)
+        {
+            // create instance of Verseus struct with default constructor
+            InventoryResponse newInventoryResponse = new InventoryResponse();
+            newInventoryResponse.initialize();
+            string connectionString = HelperClass.RetrieveConnectionString();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                // Create the command and set its properties.
+                SqlCommand command = new SqlCommand();
+                command.Connection = connection;
+                command.CommandText = "updateVersesAssignedByDonationId";
+                command.CommandType = CommandType.StoredProcedure;
+
+                // Add the input parameters and set its properties.
+                SqlParameter parameter1 = new SqlParameter();
+                parameter1.ParameterName = "@authId";
+                parameter1.SqlDbType = SqlDbType.BigInt;
+                parameter1.Direction = ParameterDirection.Input;
+                parameter1.Value = authId;
+
+
+                SqlParameter parameter3 = new SqlParameter();
+                parameter3.ParameterName = "@sfdcContactId";
+                parameter3.SqlDbType = SqlDbType.VarChar;
+                parameter3.Direction = ParameterDirection.Input;
+                parameter3.Value = sfdcContactId;
+
+                SqlParameter parameter4 = new SqlParameter();
+                parameter4.ParameterName = "@sfdcDonationId";
+                parameter4.SqlDbType = SqlDbType.VarChar;
+                parameter4.Direction = ParameterDirection.Input;
+                parameter4.Value = sfdcDonationId;
+
+                SqlParameter parameter5 = new SqlParameter();
+                parameter5.ParameterName = "@fundId";
+                parameter5.SqlDbType = SqlDbType.VarChar;
+                parameter5.Direction = ParameterDirection.Input;
+                parameter5.Value = fundId;
+
+                SqlParameter parameter6 = new SqlParameter();
+                parameter6.ParameterName = "@paymentDate";
+                parameter6.SqlDbType = SqlDbType.DateTime;
+                parameter6.Direction = ParameterDirection.Input;
+                parameter6.Value = paymentDate;
+
+
+                // Add the parameter to the Parameters collection. 
+                command.Parameters.Add(parameter1);
+                command.Parameters.Add(parameter3);
+                command.Parameters.Add(parameter4);
+                command.Parameters.Add(parameter5);
+                command.Parameters.Add(parameter6);
+
+                // Open the connection.
+                connection.Open();
+
+                int rows = command.ExecuteNonQuery();
+
+                connection.Close();
+
+                newInventoryResponse.sucess = true;
+                newInventoryResponse.error = "";
+
+                if (rows > 0)
+                {
+
+                    newInventoryResponse.error = "";
+                }
+                else
+                {
+                    newInventoryResponse.error = "No verses reassigned for this DonationId";
+                }
+
+
+                return newInventoryResponse;
+            }
+        }
+    
+    
+    
     }
 }
